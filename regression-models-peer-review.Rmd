@@ -1,20 +1,20 @@
 ---
 title: "Regression models - Peer review"
-author: "João Pedro Schmitt"
+author: "Jo�o Pedro Schmitt"
 date: "31 de outubro de 2016"
 output: html_document
 ---
 
 ### Instructions
 
-You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
+A study for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, was explored the relationship between a set of variables and miles per gallon (MPG) (outcome). The particularly interested were following two questions:
 
 * *Is an automatic or manual transmission better for MPG*
 * *Quantify the MPG difference between automatic and manual transmissions*
 
 ## Motor Trend Car Road Tests
 
-The dataset used in this work is *mtcars*, this dataset has data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+The dataset used in this work is *mtcars*, this dataset has data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-1974 models).
 
 The variables of the *mtcars* are:
 
@@ -41,6 +41,8 @@ data("mtcars")
 
 # Load libraries
 require(graphics)
+require(ggplot2)
+library(MASS)
 ```
 
 The dataset dimension of rows x columns:
@@ -49,20 +51,62 @@ The dataset dimension of rows x columns:
 dim(mtcars)
 ```
 
-The dataset characteristics:
+The dataset characteristics of the variables:
 ```{r}
 # A little view
 str(mtcars)
 ```
 
-## Linear model 1
-
-The code below creates a linear model using *mpg* as outcome and only *am* as predicator:
+The follow plot shows that apparently the manual transmission has a better consumption of miles per gallons compared with a automatic transmission:
 ```{r}
-fit <- lm(mpg ~ am, data = mtcars)
-summary(fit)
+boxplot(mpg ~ am, mtcars)
 ```
 
-In the summary above we can observe that for an automatic car we have the slope beeing zero with the mean of miles per galon around 17.417 and when we have a manual car we have the increase of 7.245 in miles per galon. The P-value is very significative because is less than 5% (0.05), so we can ignore the null hypothesis that the coeficients are zero.
+## Finding the relationship
+
+The code below creates a linear model using *mpg* as outcome and only *am* as predictor:
+```{r}
+fit1 <- lm(mpg ~ am, data = mtcars)
+summary(fit1)
+```
+
+In the summary above we can observe that for an automatic car we have the slope beeing zero with the intercept of miles per galon around 17.417 and when we have a manual car we have the increase of 7.245 in miles per galon. The P-value is significative because is less than 5% (0.05), so we can ignore the null hypothesis that the coeficients are zero. The current model explain 35.98% of the variance. In the analysis of the residuals in the plot below, we have some points that are over others points, and in this linear model it is difficult to estimate a good mpg for a given car.
+
+```{r}
+plot(fit1, which = 1)
+```
+
+To estimate the best linear model for the dataset:
+```{r}
+step <- stepAIC(lm(mpg ~ ., data = mtcars), direction="both")
+```
+
+The best model is identified by *Final Model* (mpg ~ wt + qsec + am):
+```{r}
+step$anova
+```
 
 
+The new model has the R-squared explained 84.97% compared with the old model that explain 35.98% and F-statistic is 52.75 compared with 16.86, doing the new model much more significative.
+
+```{r}
+fit2 <- lm(mpg ~ wt + qsec + am, data = mtcars)
+summary(fit2)
+```
+
+Comparing the relevance of the new model, the new model is much more significative (p-value is 1.55e-09) and we can ignore the null hypothesis of use the old model.
+
+```{r}
+anova(fit1, fit2)
+```
+
+The new residual plot is more reasonable with the less difference in the values, explainning better the fitted values.
+
+```{r}
+plot(fit2, which = 1)
+```
+
+## Conclusion
+
+We concluded that for estimate the consumption of miles per galon for a car, not only the transmission is relevant but the 1/4 mile time and the weight of the car are very important to obtain more precise results. 
+Using the best model we can see that cars that has automatic transmission have a increase of 2.9358 at miles per gallon.
