@@ -1,0 +1,68 @@
+---
+title: "Regression models - Peer review"
+author: "João Pedro Schmitt"
+date: "31 de outubro de 2016"
+output: html_document
+---
+
+### Instructions
+
+You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
+
+* *Is an automatic or manual transmission better for MPG*
+* *Quantify the MPG difference between automatic and manual transmissions*
+
+## Motor Trend Car Road Tests
+
+The dataset used in this work is *mtcars*, this dataset has data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+The variables of the *mtcars* are:
+
+1. **mpg** = Miles/(US) gallon
+2. **cyl** = Number of cylinders
+3. **disp** = Displacement (cu.in.)
+4. **hp** = Gross horsepower
+5. **drat** = Rear axle ratio
+6. **wt** = Weight (1000 lbs)
+7. **qsec** = 1/4 mile time
+8. **vs** = V/S
+9. **am** = Transmission (0 = automatic, 1 = manual)
+10. **gear** = Number of forward gears
+11. **carb** = Number of carburetors
+
+## Prepare the enviroment
+
+For this work, was used the dataset mtcars, available in the package *datasets*. The code below demonstre the setup:
+
+```{r}
+# Load the dataset
+library(datasets)
+data("mtcars")
+
+# Load libraries
+require(graphics)
+```
+
+The dataset dimension of rows x columns:
+```{r}
+# Dimensions
+dim(mtcars)
+```
+
+The dataset characteristics:
+```{r}
+# A little view
+str(mtcars)
+```
+
+## Linear model 1
+
+The code below creates a linear model using *mpg* as outcome and only *am* as predicator:
+```{r}
+fit <- lm(mpg ~ am, data = mtcars)
+summary(fit)
+```
+
+In the summary above we can observe that for an automatic car we have the slope beeing zero with the mean of miles per galon around 17.417 and when we have a manual car we have the increase of 7.245 in miles per galon. The P-value is very significative because is less than 5% (0.05), so we can ignore the null hypothesis that the coeficients are zero.
+
+
